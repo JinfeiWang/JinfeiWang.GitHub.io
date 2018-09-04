@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>记录Debian7.7搭建PyQt5环境 | 王者府</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">记录Debian7.7搭建PyQt5环境</h1><a id="logo" href="/.">王者府</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">记录Debian7.7搭建PyQt5环境</h1><div class="post-meta">Oct 13, 2014</div><div class="post-content"><p>debian7.7 环境下搭建Python3.2 + PyQt5.3.2 + Eric6.0 </p>
+<p><strong>注：此debian7.7是（stable）稳定版本，在aptitude中无pyqt5相关的包文件，故采用以下安装。debian（testing）测试版本的aptitude中有pyqt5的包，因此可以直接安装，无须以下步骤。</strong>   </p>
+<ul>
+<li>安装Python3</li>
+</ul>
+<p>​    在debian7.7默认安装的世python2.7，使用Python3可以直接用aptitude install python3 (默认安装python3.2.3)。在终端使用Python3命令即可。</p>
+<ul>
+<li><p>安装Qt5</p>
+<p>由于debian stable版本中有自带qt4的部分库文件，但我们需要qt5的开发平台，所以首先安装qt5。</p>
+</li>
+</ul>
+<p>Qt5.3.2下载：<a href="http://qt-project.org/downloads" target="_blank" rel="noopener">http://qt-project.org/downloads</a> 。</p>
+<p>安装过程：</p>
+<p>​    下载到的文件可以是在线安装程序，也可以是完整的包。在线：qt-opensource-linux-x86-1.6.0-5-online.run    完整：qt-opensource-linux-x86-5.3.2.run</p>
+<ol>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod a+x qt-opensource-linux-x86-5.3.2.run</span><br><span class="line">sudo ./qt-opensource-linux-x86-5.3.2.run</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>注，一般su安装默认在/opt/下，普通用户安装在/home/jinfei(用户名)/下。这里我采用是完整包安装。 </p>
+</li>
+</ol>
+<p>配置过程：</p>
+<p>​    安装完成后配置一下PATH，在当前用户主目录下的.bashrc （普通用户～/.bashrc，su用户/root/.bashrc）文件中加入： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export QTDIR=/home/jinfei/Qt5.3.2/5.3/gcc/</span><br><span class="line">export LD_LIBRARY_PATH=$&#123;LD_LIBRARY_PATH&#125;:$&#123;QTDIR&#125;/lib</span><br><span class="line">export PATH=$&#123;QTDIR&#125;/bin:$&#123;PATH&#125;</span><br></pre></td></tr></table></figure>
+<p>在终端输入qmake，如果显示qmake命令不存在，请通过创建软连接进行解决：将/usr/bin下的qmake软连接到/home/jinfei/Qt5.3.2/5.3/gcc/bin/qmake上，或者将/usr/lib/i386-linux-gnu/qt4/bin/qmake软连接到/home/jinfei/Qt5.3.2/5.3/gcc/bin/qmake上： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /home/jinfei/Qt5.3.2/5.3/gcc/bin/qmake /usr/bin/qmake</span><br></pre></td></tr></table></figure>
+<p>此时再输入qmake查看是否设置成功。使用qmake -v查看。</p>
+<ul>
+<li><p>安装sip </p>
+<p>​    SIP是python调用C/C++库的必备模块。因 此SIP是PyQt的依赖工具，安装PyQt之前必须先安装对应版本的SIP（PyQt5要求sip必须是sip4.16之后的）。PyQt编译时使用的SIP版本必须与python默认调用的SIP保持一 致！否则python中是无法调用PyQt的。这里我们使用最新的SIP 4.16.4.终端输入sip -V即可查看当前版本。 </p>
+</li>
+</ul>
+<ol>
+<li><p>​    SIP 4.16.4下载：<a href="http://www.riverbankcomputing.com/software/sip/download" target="_blank" rel="noopener">http://www.riverbankcomputing.com/software/sip/download</a> </p>
+</li>
+<li><p>安装过程： </p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf sip-4.16.4.tar.gz </span><br><span class="line">cd sip-4.16.4</span><br><span class="line">python3 configure.py</span><br><span class="line">sudo make</span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
+<li><p>安装PyQt5 </p>
+<p>​    PyQt是Python的一个跨平台图形开发工具集， 是Python与Qt的成功融合。PyQt包含了大约440个类、超过6000个的函数和方法，灰常强大。需要注意的是，Eric（一种Python IDE，依赖PyQt）当前最新的稳定版Eric5只支持PyQt4（确切的说是PyQt4.8以上5.0以下），支持PyQt5的Eric版本现在仅为 Eric6.0 snapshot版，该版本包含最新的Eric5的所有功能，但稳定性需要测试。如果你希望使用稳定的Eric5，请在此步骤安装 PyQt4的最新版PyQt4.11.2。这里我们安装PyQt5.3.2。</p>
+<p>​    PyQt5.3.2下载：<a href="http://www.riverbankcomputing.com/software/pyqt/download5" target="_blank" rel="noopener">http://www.riverbankcomputing.com/software/pyqt/download5</a></p>
+<p>安装过程：     </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf PyQt-gpl-5.3.2.tar.gz</span><br><span class="line">cd PyQt-gpl-5.3.2</span><br><span class="line">python3 configure.py</span><br></pre></td></tr></table></figure>
+<p>​    python3 configure.py命令后发现These PyQt5 modules will be built: QtCore, QtNetwork, QtXmlPatterns, QtDBus.说明没有安装opengl库。 </p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Aptitude install libgl1-mesa-dev libglu1-mesa-dev </span><br><span class="line">再次执行python3 configure.py 。</span><br></pre></td></tr></table></figure>
+<p>注意：此命令生成各种Qt模块后，其中的 QtWebKitWidgets模块由于Qt4和Qt5的qprinter.h所属模块的调整（Qt4存在于QtGui中，Qt5将其调整到 QtPrintSupport中了），QtWebKitWidgets的Makefile中缺失了对QtPrintSupport的头文件目录引用，会导 致后面编译PyQt5时无法找到qprinter.h头文件，编译失败（编译过程非常漫长）：</p>
+<p>​    qprinter.h: No such file or directory</p>
+<p>所以需要向刚生成的QtWebKitWidgets模块源文件的MakeFile文件的INCPATH中添加QtPrintSupport引用。</p>
+</li>
+</ul>
+<p>原INCPATH为：</p>
+<p>INCPATH       = -I../../../Qt5.3.2/5.3/gcc/mkspecs/linux-g++ -I. -I. -I/usr/include/python3.2mu -I../../../Qt5.3.2/5.3/gcc/include -I../../../Qt5.3.2/5.3/gcc/include/QtWebKitWidgets -I../../../Qt5.3.2/5.3/gcc/include/QtWebKit -I../../../Qt5.3.2/5.3/gcc/include/QtWidgets -I../../../Qt5.3.2/5.3/gcc/include/QtNetwork -I../../../Qt5.3.2/5.3/gcc/include/QtGui -I../../../Qt5.3.2/5.3/gcc/include/QtCore -I.</p>
+<p>现在INCPATH为：</p>
+<p>INCPATH       = -I../../../Qt5.3.2/5.3/gcc/mkspecs/linux-g++ -I. -I. -I/usr/include/python3.2mu -I../../../Qt5.3.2/5.3/gcc/include -I../../../Qt5.3.2/5.3/gcc/include/QtWebKitWidgets -I../../../Qt5.3.2/5.3/gcc/include/QtWebKit -I../../../Qt5.3.2/5.3/gcc/include/QtWidgets -I../../../Qt5.3.2/5.3/gcc/include/QtNetwork -I../../../Qt5.3.2/5.3/gcc/include/QtPrintSupport -I../../../Qt5.3.2/5.3/gcc/include/QtGui -I../../../Qt5.3.2/5.3/gcc/include/QtCore -I.</p>
+<p>或者可以直接在QtWebKitWidgets模块源文件的QtWebKitWidgets.pro文件中加入：</p>
+<p>​    QT += printsupport也可以。</p>
+<p>接下来进行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo make  </span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>配置过程： </p>
+<p>​    安装完成后进入Python3环境验证是否安装成功： &gt;&gt;&gt; import PyQt5 </p>
+<p>如果提示不存在PyQt5模块，表示安装的PyQt5没有被 python3正确识别。默认的安装路径为python的site-packages目录。通常python3的模块安装路径会分成2个，一个/usr /lib/python3，一个/usr/lib/python3.2，两个路径下的模块都能被python3环境正确调用，但是python3.2的 site-packages目录下的模块貌似无法调用。PyQt5偏偏默认安装到此目录了。解决办法是为其创建软连接，保险起见，python3目录和 python3.2目录分别创建一个：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ln -s /usr/lib/python3.2/site-packages/PyQt5 /usr/lib/python3.2/PyQt5</span><br><span class="line"></span><br><span class="line">sudo ln -s /usr/lib/python3.2/site-packages/PyQt5 /usr/lib/python3/dist-packages/PyQt5</span><br></pre></td></tr></table></figure>
+<p>可能不同的计算机上可识别的模块安装目录会存在差异，但是解决原理都差不多，在python3可识别模块的路径下创建PyQt5的软连接即可让Python3成功识别。</p>
+<p>另外一个解决办法是在python3 configure.py 时就指定安装目录。如：</p>
+<p>​    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 configure.py --destdir /usr/lib/python3.2</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>安装QScintilla2 </p>
+<p>​    QScintilla2是连接编译器和Python的接口，因此是Eric的必需前置组件。QScintilla2 中需要单独安装3个模块：本体，Designer和python bingdings。 </p>
+<p>​    QScintilla2.8.4下载：<a href="http://www.riverbankcomputing.com/software/qscintilla/download" target="_blank" rel="noopener">http://www.riverbankcomputing.com/software/qscintilla/download</a> </p>
+<p>安装过程： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tar -xzvf QScintilla-gpl-2.8.4.tar.gz</span><br><span class="line"></span><br><span class="line">cd QScintilla-gpl-2.8.4</span><br></pre></td></tr></table></figure>
+<p>安装字体： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">cd Qt4Qt5</span><br><span class="line">qmake qscintilla.pro</span><br><span class="line">sudo make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>安装Designer： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd ../designer-Qt4Qt5</span><br><span class="line"></span><br><span class="line">qmake designer.pro  </span><br><span class="line"></span><br><span class="line">sudo make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>安装python bindings： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">cd ../Python</span><br><span class="line"></span><br><span class="line">python3 configure.py --pyqt=PyQt5</span><br><span class="line"></span><br><span class="line">sudo make</span><br><span class="line"></span><br><span class="line">sudo make install</span><br></pre></td></tr></table></figure>
+<p>​    以上步骤即可正确安装QScintilla2。需要注意的是Python bingdings安装时需要指定–pyqt=PyQt5参数，否则默认是为PyQt4安装。或者直接修改其configure.py，将 pyqt5_is_default = False改为pyqt5_is_default = True也可。 </p>
+</li>
+<li><p>安装eric6.0 </p>
+<p>​    Eric作为一款强大的开源Python IDE，支持Qt界面设计器的Eric在Python GUI开发中更是首屈一指，Python+PyQt+Eric已经成为一种标准的Python GUI开发平台。其中Eric4支持Python2.6+与PyQt4.6+组合，Eric5支持Python3.0+与PyQt4.8+组 合，Eric6支持Python3.0+与PyQt5.0+组合。目前Eric5.4.7为最新稳定版。Eric6.0为snapshot版。上文已有介 绍。具体搭配可参考：<a href="http://eric-ide.python-projects.org/eric-download.html。这里安装" target="_blank" rel="noopener">http://eric-ide.python-projects.org/eric-download.html。这里安装</a> Eric6.0。</p>
+<p>​    Eric6.0下载：<a href="http://sourceforge.net/projects/eric-ide/files/eric6/unstable/" target="_blank" rel="noopener">http://sourceforge.net/projects/eric-ide/files/eric6/unstable/</a> </p>
+<p>​    下载其中的eric6-6.0-snapshot-20140720.tar.gz主文件和eric6-i18n-zh_CN.GB2312-6.0-snapshot-20140720.tar.gz中文语言包。 </p>
+<p>安装过程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">tar -zxvf eric6-6.0-snapshot-20140720.tar.gz</span><br><span class="line">tar -zxvf eric6-i18n-zh_CN.GB2312-6.0-snapshot-20140720.tar.gz //语言包文件会自动解压到Eric6.0主文件解压目录中。没有的话手动复制。</span><br><span class="line">cd eric6-6.0-snapshot-20140720</span><br><span class="line">sudo python3 install.py           //安装主程序</span><br><span class="line">sudo python3 install-i18n.py   //安装中文语言包</span><br></pre></td></tr></table></figure>
+<p>需要注意，由于是以root身份安装（sudo），所以运行时需要在root执行：eric6</p>
+<p>才不会导致Eric运行或者关闭时写入配置文件出错（sudo安装的Eric6的文件都是root所有，其他用户执行Eric6写入配置文件时权限不足）。为了保证直接执行：eric6时不致出错，可以将当前用户的eric6目录权限设置为可读写：    </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo chmod a+w -R ~/.eric6</span><br><span class="line"></span><br><span class="line">sudo chmod a+w -R ～/.config/Eric6</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jinfei Wang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2014/10/13/PyQt5/">http://up-dream.com/2014/10/13/PyQt5/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0 CN</a> 许可协议。转载请注明出处！</li></ul></div><br><div class="tags"><a href="/tags/记录/">记录</a></div><div class="post-nav"><a class="pre" href="/2014/12/21/matplotlib/">记录Win7安装Matplotlib</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://up-dream.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/记录/" style="font-size: 15px;">记录</a> <a href="/tags/PM/" style="font-size: 15px;">PM</a> <a href="/tags/VPS/" style="font-size: 15px;">VPS</a> <a href="/tags/ShadowSocks/" style="font-size: 15px;">ShadowSocks</a> <a href="/tags/记录，生活/" style="font-size: 15px;">记录，生活</a> <a href="/tags/软件/" style="font-size: 15px;">软件</a> <a href="/tags/Rust/" style="font-size: 15px;">Rust</a> <a href="/tags/Debian，NFS/" style="font-size: 15px;">Debian，NFS</a> <a href="/tags/PyQtDeploy/" style="font-size: 15px;">PyQtDeploy</a> <a href="/tags/VNC/" style="font-size: 15px;">VNC</a> <a href="/tags/x2go/" style="font-size: 15px;">x2go</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/ShadowSocks/">VPS搭建自己的ShadowSocks</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/PM-001/">产品经理的场子</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/IOT/">IOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/26/software/">software</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/产品经理规划-王金飞/">产品经理规划-王金飞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/28/x2go/">X2Go远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/25/vnc/">VNC远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/09/pyqtdeploywin32/">记录Pyqtdeploy deploy For Win32</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/rustForArm/">Rust 语言 For ARM开发板</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/03/19/win7/">记录Win7忘记密码如何破解</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.fonrich.com" title="丰郅（上海）新能源" target="_blank">丰郅（上海）新能源</a><ul></ul><a href="http://monitoring.fonrich.com:8089" title="Foneye系统" target="_blank">Foneye系统</a><ul></ul><a href="http://www.woshipm.com" title="人人都是产品经理" target="_blank">人人都是产品经理</a><ul></ul><a href="http://www.chanpin100.com" title="产品100" target="_blank">产品100</a><ul></ul><a href="ttps://www.pmcaff.com" title="PMCAFF" target="_blank">PMCAFF</a><ul></ul><a href="http://36kr.com" title="36氪" target="_blank">36氪</a><ul></ul><a href="https://www.huxiu.com" title="虎嗅" target="_blank">虎嗅</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">王者府.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

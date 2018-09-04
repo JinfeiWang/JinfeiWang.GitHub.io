@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>记录Pyqtdeploy deploy For Win32 | 王者府</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">记录Pyqtdeploy deploy For Win32</h1><a id="logo" href="/.">王者府</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">记录Pyqtdeploy deploy For Win32</h1><div class="post-meta">Apr 9, 2016</div><div class="post-content"><p> Pyqtdeploy deploy Win32 </p>
+<p>​    Pyqtdeploy 是 PyQt 应用程序部署到桌面平台(windows，linux and OS X) 和 移动 平台(iOS and Android)的一个工具。 </p>
+<p>​    Pyqtdeploy deploy targets: {android-32、ios-64、linux-32、linux-64、osx- 64、win-32、win-64} </p>
+<p><strong>参考资料以及软件下载网址:</strong></p>
+<ol>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">1. https://riverbankcomputing.com/software/pyqtdeploy/intro --&gt; pyqtdeploy 主页</span><br><span class="line">2. http://www.qt.io/download-open-source/ --&gt; Qt5.5.1 下载</span><br><span class="line">3. https://riverbankcomputing.com/software/sip/download --&gt; Sip 源码下载</span><br><span class="line">4. https://riverbankcomputing.com/software/pyqt/download --&gt; PyQt5 源码下载 </span><br><span class="line">5. https://www.python.org/downloads/source/ --&gt; Python3.4 源码下载 </span><br><span class="line">6. http://www.androiddevtools.cn/ --&gt; Android 相关下载</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>系统编译环境:</strong> </p>
+<ol>
+<li>Windows7 32 位 </li>
+<li>Python3.4.0  </li>
+<li>Qt5.5.1 and PyQt-gpl-5.5.1 </li>
+<li>Sip4.17 </li>
+</ol>
+<p><strong>编译前的准备工作和部署平台:</strong></p>
+<ol>
+<li><p>Win7 安装 Python3.4.0.msi</p>
+<p> 下载地址 <a href="https://www.python.org/downloads/windows/" target="_blank" rel="noopener">https://www.python.org/downloads/windows/</a> 点击默认安装即可，默认安装路径应该为 C:\Python34 </p>
+</li>
+<li><p>安装 PyQt5-5.5.1-gpl-Py3.4-Qt5.5.1-x32.exe</p>
+<p> 下载地址 <a href="https://riverbankcomputing.com/software/pyqt/download5" target="_blank" rel="noopener">https://riverbankcomputing.com/software/pyqt/download5</a> 点击默认安装即可，默认安装在 C:\Python34\Lib\site-packages\PyQt5 </p>
+</li>
+<li><p>安装 qt-opensource-windows-x86-msvc2010-5.5.1.exe </p>
+<p>下载地址 <a href="http://download.qt.io/archive/qt/5.5/，选择对应版本即可" target="_blank" rel="noopener">http://download.qt.io/archive/qt/5.5/，选择对应版本即可</a> 点击默认安装即可，默认安装路径 C:\Qt\Qt5.5.1 </p>
+</li>
+<li><p>安装 Microsoft Visual Studio2010 环境<br>下载 X16-60997VS2010UltimTrialCHS.iso 文件，解压后执行 setup/setup.exe 进行安装，下载地址 <a href="http://www.xiazaiba.com/html/4614.html" target="_blank" rel="noopener">http://www.xiazaiba.com/html/4614.html</a> 默认安装路径 C:\Program Files\Microsoft Visual Studio 10.0 </p>
+</li>
+</ol>
+<p>5 . 源码软件下载 </p>
+<p>​    1) <a href="https://www.python.org/ftp/python/3.4.0/Python-3.4.0.tar.xz" target="_blank" rel="noopener">https://www.python.org/ftp/python/3.4.0/Python-3.4.0.tar.xz</a> </p>
+<p>​    2) <a href="http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.zip" target="_blank" rel="noopener">http://sourceforge.net/projects/pyqt/files/sip/sip-4.17/sip-4.17.zip</a> </p>
+<p>​    3) <a href="http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.5.1/PyQt-gpl-" target="_blank" rel="noopener">http://sourceforge.net/projects/pyqt/files/PyQt5/PyQt-5.5.1/PyQt-gpl-</a> 5.5.1.zip </p>
+<ol start="6">
+<li><p>系统环境变量配置 </p>
+<p>1) win7 环境变量配置:右键计算机属性—高级系统设置—环境变量—系统变量 (S)下的 Path 中添加以下路径。 </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> C:\Python34;</span><br><span class="line"> C:\Python34\Scripts;</span><br><span class="line"> C:\Qt\Qt5.5.1\5.5\msvc2010\bin; C:\Qt\Qt5.5.1\5.5\msvc2010\include;</span><br><span class="line"> C:\Program Files\Microsoft SDKs\Windows\v7.0A\Include; C:\Program Files\Microsoft SDKs\Windows\v7.0A\Lib; C:\Program Files\Microsoft Visual Studio 10.0\VC\include; C:\Program Files\Microsoft Visual Studio 10.0\Common7\IDE; C:\Program Files\Microsoft Visual Studio 10.0\VC\bin; </span><br><span class="line"></span><br><span class="line">C:\Program Files\Microsoft Visual Studio 10.0\VC\lib</span><br></pre></td></tr></table></figure>
+<p>​    2) 打开 cmd 进行测试环境变量是否起效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nmake -help</span><br><span class="line">vcvars32 </span><br><span class="line">qmake –version python --version</span><br></pre></td></tr></table></figure>
+<ol start="7">
+<li><p>安装 pyqtdeploy</p>
+<p>python 安装完成后，其自带 easy_install 工具，cmd 进入对应目录: </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\Python34\Scripts</span><br><span class="line">&gt; easy_install pip</span><br><span class="line">&gt; pip3 install pyqtdeploy</span><br></pre></td></tr></table></figure>
+<ol start="8">
+<li>pyqtdeploy 静态编译 python3.4.0 创建一个文件夹，作为我们的静态编译代码生成目录。本人选择 C:\work\SYSROOT 然后将下载的源码文件放置在 C:\work\SYSROOT\src 内并解压 ，源码文件如下: </li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">C:\work\SYSROOT\src\Python-3.4.0 </span><br><span class="line"></span><br><span class="line">C:\work\SYSROOT\src\PyQt-gpl-5.5.1 </span><br><span class="line"></span><br><span class="line">C:\work\SYSROOT\src\sip-4.17</span><br></pre></td></tr></table></figure>
+<p>cmd 到对应源码目录，cmd 对应执行命令:  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\work\SYSROOT\src\Python-3.4.0</span><br><span class="line">&gt; pyqtdeploycli --package python --target win-32 configure</span><br><span class="line">&gt; C:\Qt\Qt5.5.1\5.5\msvc2010\bin\qmake SYSROOT= C:\work\SYSROOT </span><br><span class="line">&gt; vcvars32</span><br><span class="line">&gt; nmake</span><br><span class="line">&gt; nmake install</span><br></pre></td></tr></table></figure>
+<ol start="9">
+<li>pyqtdeploy 静态编译 sip-4.17 </li>
+</ol>
+<p><strong>备注:设置 Qt 环境,不执行该步骤，后面会出错。</strong> </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\Qt\Qt5.5.1\5.5\msvc2010\bin </span><br><span class="line">&gt; qtenv2.bat</span><br></pre></td></tr></table></figure>
+<p> cmd 到对应源码目录，执行以下命令: </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\work\SYSROOT\src\sip-4.17</span><br><span class="line">&gt; pyqtdeploycli --package sip --target win-32 configure </span><br><span class="line"></span><br><span class="line">&gt; python configure.py --static --sysroot= C:\work\SYSROOT --no-tools --use-qmake --configuration=sip-win.cfg </span><br><span class="line"></span><br><span class="line">&gt; C:\Qt\Qt5.5.1\5.5\msvc2010\bin\qmake &gt; vcvars32</span><br><span class="line">&gt; nmake</span><br><span class="line">&gt; nmake install</span><br></pre></td></tr></table></figure>
+<ol start="10">
+<li>pyqtdeploy 静态编译 PyQt-gpl-5.5.1 cmd 到对应源码目录，执行以下命令: </li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\work\SYSROOT\src\PyQt-gpl-5.5.1 </span><br><span class="line"></span><br><span class="line">&gt; pyqtdeploycli --package pyqt5 --target win-32 configure</span><br></pre></td></tr></table></figure>
+<p><strong>备注:此时编辑 pyqt5-win.cfg 可以裁剪配置去除无需编译的库，pyqtdeploy 对 QAxContainer QtLocation QtPositioning 以及 _QOpenGLFunctions_ES2 支持存在问题，删除之即可，然后后编译 OK，时间会比较长</strong> 。 </p>
+<p>继续进行编译 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; python configure.py --static --sysroot= C:\work\SYSROOT --no-tools --no-qsci-api --no-designer-plugin --no-qml-plugin – configuration=pyqt5-win.cfg</span><br><span class="line">&gt; vcvars32 </span><br><span class="line"></span><br><span class="line">&gt; nmake</span><br><span class="line">&gt; nmake install</span><br></pre></td></tr></table></figure>
+<ol start="11">
+<li><p>pyqtdeploy 生成 Qt 工程</p>
+<p>1)创建一个工程文件夹 C:\work\SYSROOT\project 写一个 PyQt5 的代码文件，比如 myproject.py </p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">from PyQt5 import QtWidgets,QtGui,QtCore import sys</span><br><span class="line"> if __name__ == &apos;__main__&apos;: </span><br><span class="line"></span><br><span class="line">app = QtWidgets.QApplication(sys.argv) window = QtWidgets.QWidget()</span><br><span class="line"> button = QtWidgets.QPushButton(w) button.setText(&quot;hello pyqtdeploy&quot;) window.show() </span><br><span class="line"></span><br><span class="line">app.exec_()</span><br></pre></td></tr></table></figure>
+<p>为了部署 Pyqt 应用程序 App，首先要创建一个 pyqtdeploy 工程。 </p>
+<p>在该目录下执行 &gt; pyqtdeploy pyqt.pdy<br> 相关细节以及 pyatdeploy 的 tutorial 可以参考其官方资料，如下网址: <a href="http://pyqt.sourceforge.net/Docs/pyqtdeploy/tutorial.html" target="_blank" rel="noopener">http://pyqt.sourceforge.net/Docs/pyqtdeploy/tutorial.html</a> </p>
+<p>#1. Application Source: </p>
+<p>Name: 填入你程序的名称<br> Main Script file: 程序的入口文件<br> Application Package Directory: 程序的其他 py 文件 </p>
+<p>Target Python version :对应的 python 版本</p>
+<p> Target PyQt version :对应 pyqt 版本 </p>
+<p>#2. qmake </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">这一页没有什么特别的设置</span><br></pre></td></tr></table></figure>
+<p>#3. PyQt Modules<br> 这一页中你的 pyqt 项目中使用了什么模块就勾选什么模块就可以了 </p>
+<p>#4. Standard Library </p>
+<p>默认设置即可 </p>
+<p>#5. Other Packages </p>
+<p>默认设置即可 </p>
+<p>#6. Other Extension Modules </p>
+<p>默认设置即可 </p>
+<p>#7. Locations </p>
+<p>Interpreter: 系统 python 可执行文件路径<br> Source directory: 下载的 python 源码, 解压到一个目录, 填写路径到这里就 ok 了 ! Includedirectory: 静态编译后的python头文件路径<br> Python library: python 的静态库文件路径<br> Standard python library: 静态编译后 python 标准库文件路径<br> qmake: Qt qmake 文件路径 </p>
+<p>#8. Build </p>
+<p>这里必要重要的是勾选 Verbose output, 这样子出错了能够比较准确的定位. 另外勾 选 Additional Build Steps, 可以帮你编译运行. 由于我们使用的是 nmake，所以只选择 run qmake 即可。cmd 到 build 目录 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&gt; cd C:\work\SYSROOT\project\build</span><br><span class="line">&gt; nmake</span><br></pre></td></tr></table></figure>
+<p> 生成的 exe 文件在 C:\work\SYSROOT\project\build\release 下。 </p>
+</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jinfei Wang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2016/04/09/pyqtdeploywin32/">http://up-dream.com/2016/04/09/pyqtdeploywin32/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0 CN</a> 许可协议。转载请注明出处！</li></ul></div><br><div class="tags"><a href="/tags/PyQtDeploy/">PyQtDeploy</a></div><div class="post-nav"><a class="pre" href="/2016/05/25/vnc/">VNC远程桌面软件的安装</a><a class="next" href="/2016/03/10/rustForArm/">Rust 语言 For ARM开发板</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://up-dream.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/记录/" style="font-size: 15px;">记录</a> <a href="/tags/PM/" style="font-size: 15px;">PM</a> <a href="/tags/VPS/" style="font-size: 15px;">VPS</a> <a href="/tags/ShadowSocks/" style="font-size: 15px;">ShadowSocks</a> <a href="/tags/记录，生活/" style="font-size: 15px;">记录，生活</a> <a href="/tags/软件/" style="font-size: 15px;">软件</a> <a href="/tags/Rust/" style="font-size: 15px;">Rust</a> <a href="/tags/Debian，NFS/" style="font-size: 15px;">Debian，NFS</a> <a href="/tags/PyQtDeploy/" style="font-size: 15px;">PyQtDeploy</a> <a href="/tags/VNC/" style="font-size: 15px;">VNC</a> <a href="/tags/x2go/" style="font-size: 15px;">x2go</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/ShadowSocks/">VPS搭建自己的ShadowSocks</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/PM-001/">产品经理的场子</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/IOT/">IOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/26/software/">software</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/产品经理规划-王金飞/">产品经理规划-王金飞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/28/x2go/">X2Go远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/25/vnc/">VNC远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/09/pyqtdeploywin32/">记录Pyqtdeploy deploy For Win32</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/rustForArm/">Rust 语言 For ARM开发板</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/03/19/win7/">记录Win7忘记密码如何破解</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.fonrich.com" title="丰郅（上海）新能源" target="_blank">丰郅（上海）新能源</a><ul></ul><a href="http://monitoring.fonrich.com:8089" title="Foneye系统" target="_blank">Foneye系统</a><ul></ul><a href="http://www.woshipm.com" title="人人都是产品经理" target="_blank">人人都是产品经理</a><ul></ul><a href="http://www.chanpin100.com" title="产品100" target="_blank">产品100</a><ul></ul><a href="ttps://www.pmcaff.com" title="PMCAFF" target="_blank">PMCAFF</a><ul></ul><a href="http://36kr.com" title="36氪" target="_blank">36氪</a><ul></ul><a href="https://www.huxiu.com" title="虎嗅" target="_blank">虎嗅</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">王者府.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

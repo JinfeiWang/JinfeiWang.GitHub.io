@@ -1,0 +1,153 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title> | 王者府</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">王者府</h1><a id="logo" href="/.">王者府</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"></h1><div class="post-meta">Feb 26, 2018</div><div class="post-content"><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: VPS搭建自己的ShadowSocks</span><br><span class="line">date: 2017-12-02 20:54:53</span><br><span class="line">tags: [Software]</span><br></pre></td></tr></table></figure>
+<h1 id="软件资源管理方案"><a href="#软件资源管理方案" class="headerlink" title="软件资源管理方案"></a>软件资源管理方案</h1><p>本方案要实现的主要目标：</p>
+<ul>
+<li>提高代码安全性<ul>
+<li>以项目为粒度进行权限管理，每个工程师只能访问自己负责的项目代码</li>
+<li>代码的编译、发布操作都在服务器端完成</li>
+<li>从服务器clone下来的代码会经过加密</li>
+</ul>
+</li>
+<li>提高代码质量<ul>
+<li>依托Gitlab进行方便的代码Review</li>
+<li>增加了严格的内部测试流程，由工程师进行交叉测试并出具测试报告</li>
+</ul>
+</li>
+</ul>
+<h2 id="1-依赖的资源和服务"><a href="#1-依赖的资源和服务" class="headerlink" title="1 依赖的资源和服务"></a>1 依赖的资源和服务</h2><p>本方案依托于公司内部的SVN服务和Gitlab服务，实现对软件开发整个流程的管控。</p>
+<ul>
+<li><p>SVN</p>
+<ul>
+<li>sysware.fonrich.com (<strong>源代码</strong>和<strong>文档</strong>备份)</li>
+<li>svn.fonrich.com (<strong>HEX</strong>和<strong>使用文档</strong>发布)</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>跨部门的资源交互（HEX、使用文档）</li>
+</ul>
+<ul>
+<li>Gitlab<ul>
+<li>git.fonrich.com</li>
+<li>源代码托管</li>
+<li>问题跟踪、任务指派</li>
+<li>自动化编译、软件发布（Gitlab-runner）</li>
+</ul>
+</li>
+</ul>
+<p>Gitlab由IT部门管理，IT部门具有Gitlab的ROOT权限，此权限可以管理仓库和用户，但是不能查看和下载源代码。</p>
+<h3 id="服务器环境和工具链要求"><a href="#服务器环境和工具链要求" class="headerlink" title="服务器环境和工具链要求"></a>服务器环境和工具链要求</h3><p>Gitlab更新较快，如果是安装在Debian上，每月执行一次更新即可（sudo apt upgrade）。</p>
+<p>软件部门需要使用ROOT账户配置一个全局的Gitlab runner来执行各个仓库的工作负载（主要是执行自动编译操作和发布操作），依赖的资源有：</p>
+<ul>
+<li>绿盾（部分源码可能被绿盾加密，因此服务器需要有解密能力）</li>
+<li>rustup &amp;&amp; rust nightly版本编译器（每月1日更新一次编译器）</li>
+<li>make &amp;&amp; arm-none-eabi-gcc</li>
+</ul>
+<p>同时服务器上需要以release账户checkout两个工作文件夹，分别是SVN和Sysware SVN的工作目录，路径为svn.fonrich.com/Release的目录用于存放软件部门发布给产品工程部的HEX文件和使用文档。</p>
+<p>svn.sysware.com/Release这个目录用于内部软件源代码和文档的备份，此目录仅软件部门内相关Manager具有访问权限。</p>
+<h2 id="2-Gitlab项目成员组成及权限分配"><a href="#2-Gitlab项目成员组成及权限分配" class="headerlink" title="2 Gitlab项目成员组成及权限分配"></a>2 Gitlab项目成员组成及权限分配</h2><p>托管在Gitlab上的正式项目，由PL/PT负责创建和基础配置，拥有项目的管理权限，具体的情况如下表：</p>
+<table>
+<thead>
+<tr>
+<th>人员</th>
+<th>权限</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PL/PT</td>
+<td>Master</td>
+<td>全功能</td>
+</tr>
+<tr>
+<td>开发者</td>
+<td>Developer</td>
+<td>不能访问被保护的分支，拥有其他所有功能</td>
+</tr>
+<tr>
+<td>测试者</td>
+<td>Reporter</td>
+<td>对代码具有只读的访问权限，可以提交Issue</td>
+</tr>
+<tr>
+<td>PM、产品部门测试者</td>
+<td>Guest</td>
+<td>可以提交Issue和参与讨论，查看版本发布记录，不能访问代码</td>
+</tr>
+</tbody>
+</table>
+<p>PT/部门经理每天要Review开发者提交的代码，并根据情况提出修改意见。</p>
+<h2 id="3-软件版本管理"><a href="#3-软件版本管理" class="headerlink" title="3 软件版本管理"></a>3 软件版本管理</h2><p>每发布一个软件，必须要有此软件的版本号，及相应的接口能从运行的软件内部读取到此版本号，版本号为三段式（major-minor-bugfix）版本号，例如版本号1.0.0，对应的16进制值为0x1-00-0，major版本号用4bit编码，minor版本号用8bit编码，bugfix版本号用4bit编码，整个版本号信息共16bit。</p>
+<ul>
+<li>major版本号为主版本号，在发布里程碑版本发生改变</li>
+</ul>
+<ul>
+<li>minor版本号为次版本号，当发生较大的功能变更时修改此版本号。</li>
+</ul>
+<ul>
+<li>bugfix版本号为bug修复记录，当修复当前版本bug或者微小的功能调整时发生改变。</li>
+</ul>
+<p>当某一版本号溢出时，向上级版本号进位，依据此编码规则，理论上最多可以发布65535（0xFFFF）个版本。</p>
+<h3 id="README-md"><a href="#README-md" class="headerlink" title="README.md"></a>README.md</h3><p>本文档内部使用，不对外发布，包含至少以下几个章节：</p>
+<ul>
+<li>环境需求：编译源码需要的工具链和依赖项目</li>
+<li>编译方法：描述进行编译的具体命令</li>
+<li>警告提示：对第三方软件和系统内软件在编译时会出现的警告的描述</li>
+</ul>
+<h3 id="软件设计概要"><a href="#软件设计概要" class="headerlink" title="软件设计概要"></a>软件设计概要</h3><p>本文档内部使用，不对外发布，至少应该包含以下几个章节：</p>
+<ul>
+<li>功能概要：描述本版本实现的功能特性，用了多少个串口、SPI接口等外设信息</li>
+<li>性能指标：描述本版本设计的功能的性能指标，例如通信距离、通信速率、环境要求等</li>
+<li>技术架构：描述本版本内部使用了那些技术，并且互相之间是如何工作的</li>
+<li>资源占用：描述本版本软件使用了多少线程、内部有多少全局变量等细节，并估算内存使用量</li>
+</ul>
+<h3 id="软件使用手册"><a href="#软件使用手册" class="headerlink" title="软件使用手册"></a>软件使用手册</h3><p>本文档为软件的使用说明书，至少应该包含以下几个章节：</p>
+<ul>
+<li>操作指南：软件的基本操作，如何开启、关闭、运行等基本操作描述</li>
+<li>数据定义：和外界交互的数据格式及内容定义，例如对外提供的寄存器定义或者HTTPS接口定义等</li>
+<li>故障描述：用于指示软件当前的运行状态和当出现故障时对外的故障指示和反应</li>
+</ul>
+<h3 id="软件测试手册"><a href="#软件测试手册" class="headerlink" title="软件测试手册"></a>软件测试手册</h3><p>本文档内部使用，不对外发布，至少应该包含以下几个章节：</p>
+<ul>
+<li>测试数据定义：对外提供的特殊测试接口，仅为内部使用，不为终端用户开放</li>
+<li>测试操作指南：测试各项功能时的操作方法和状态指示</li>
+</ul>
+<h2 id="4-测试管理"><a href="#4-测试管理" class="headerlink" title="4 测试管理"></a>4 测试管理</h2><p>软件分为内部测试和外部测试，内部测试在发布前进行，由软件部门内部执行，外部测试在发布后进行，由测试部门执行，这里指的是内部测试。</p>
+<p>因为嵌入式软件的测试需要硬件&amp;产品的协助，特别是对测试环境的需求强烈，因此在软件内部集中测试时需要硬件&amp;产品提供相应的测试环境和支持，测试使用的环境由软件工程师提出，并由硬件&amp;测试协助搭建，使用的环境原则上应该尽可能模拟各种设备工作现场的实际情况，并达到产品设计中的极限工作条件。</p>
+<p>测试使用的工具应该放在工程根目录的test文件夹下，内部测试覆盖所有功能，测试方案与外部测试相同，并需要使用表格记录进度，测试为交叉测试，由开发者提供协助，主体工作由部门内部其他工程师进行,在软件发布前需要审核内部测试结果，审核通过后才可以进行版本发布操作。</p>
+<p>代码内不适合进行单元测试的（主要是嵌入式软件），要通过调试接口将信息暴露出来，由外部脚本协同进行测试，适合进行单元测试的，单元测试应该覆盖所有的项目代码。</p>
+<h2 id="5-发布流程"><a href="#5-发布流程" class="headerlink" title="5 发布流程"></a>5 发布流程</h2><p>在项目代码发生变更的情况下，每天至少提交一次并要求有可读性良好的备注，在经过一段时间的开发和内部测试，达到发布标准时，开发者需要新建对应的版本tag，新建tag的操作会触发Gitlab的发布动作，它会在服务器端根据预先设置的规则自动编译本仓库内的源码，在编译通过后将编译好的HEX/ELF和文档一起放置到对应的SVN目录下并提交，此过程不需要Developer手工参与。</p>
+<p>每次发布时，在发布目录下除了包含源代码之外，还需要包含软件使用手册。</p>
+<p><strong>目标是在正式发布后即可用</strong>，不用重新修复bug。</p>
+<p>具体的操作步骤为：</p>
+<ol>
+<li>开发者在内部测试通过后，将最新代码提交到Gitlab，并新建对应版本的tag</li>
+<li>打完tag后，开发者对项目相关人员公开发送邮件进行说明</li>
+<li>PL确认编译、发布过程无错误后，发送确认邮件向产品工程部</li>
+<li>软件部门负责人定期将发布后的程序备份到svn.sysware.com/Release</li>
+</ol>
+<h3 id="发布路径管理"><a href="#发布路径管理" class="headerlink" title="发布路径管理"></a>发布路径管理</h3><p>发布路径规则如下：Release/项目代号/软件类型/软件名/软件名.hex+软件使用手册</p>
+<ul>
+<li>项目代号<ul>
+<li>Salem</li>
+<li>Gilgal2</li>
+<li>GIlgal3</li>
+<li>……</li>
+</ul>
+</li>
+<li>软件类型<ul>
+<li>Firmware</li>
+<li>Backend</li>
+<li>Frontend</li>
+</ul>
+</li>
+<li>软件名<ul>
+<li>按照Fonrich的命名规则（项目代号+硬件名称+软件主要功能+版本号）</li>
+</ul>
+</li>
+</ul>
+<p>例如Salem DataGate发布时，hex和使用文档的发布目录为</p>
+<p>​    svn.fonrich.com/Release/Salem/Firmware/Salem_CMB_gw_2018/Salem_CMB_gw_2018.hex</p>
+<p>软件源码备份的位置在</p>
+<p>​    svn.sysware.com/Release/Salem/Firmware/Salem_CMB_gw_2018.zip</p>
+</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jinfei Wang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2018/02/26/software/">http://up-dream.com/2018/02/26/software/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0 CN</a> 许可协议。转载请注明出处！</li></ul></div><br><div class="tags"></div><div class="post-nav"><a class="pre" href="/2018/07/04/IOT/"></a><a class="next" href="/2017/11/08/产品经理规划-王金飞/"></a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://up-dream.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/记录/" style="font-size: 15px;">记录</a> <a href="/tags/PM/" style="font-size: 15px;">PM</a> <a href="/tags/VPS/" style="font-size: 15px;">VPS</a> <a href="/tags/ShadowSocks/" style="font-size: 15px;">ShadowSocks</a> <a href="/tags/记录，生活/" style="font-size: 15px;">记录，生活</a> <a href="/tags/软件/" style="font-size: 15px;">软件</a> <a href="/tags/Rust/" style="font-size: 15px;">Rust</a> <a href="/tags/Debian，NFS/" style="font-size: 15px;">Debian，NFS</a> <a href="/tags/PyQtDeploy/" style="font-size: 15px;">PyQtDeploy</a> <a href="/tags/VNC/" style="font-size: 15px;">VNC</a> <a href="/tags/x2go/" style="font-size: 15px;">x2go</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/ShadowSocks/">VPS搭建自己的ShadowSocks</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/08/02/PM-001/">产品经理的场子</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/07/04/IOT/">IOT</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/02/26/software/">software</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/11/08/产品经理规划-王金飞/">产品经理规划-王金飞</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/28/x2go/">X2Go远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/05/25/vnc/">VNC远程桌面软件的安装</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/04/09/pyqtdeploywin32/">记录Pyqtdeploy deploy For Win32</a></li><li class="post-list-item"><a class="post-list-link" href="/2016/03/10/rustForArm/">Rust 语言 For ARM开发板</a></li><li class="post-list-item"><a class="post-list-link" href="/2015/03/19/win7/">记录Win7忘记密码如何破解</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.fonrich.com" title="丰郅（上海）新能源" target="_blank">丰郅（上海）新能源</a><ul></ul><a href="http://monitoring.fonrich.com:8089" title="Foneye系统" target="_blank">Foneye系统</a><ul></ul><a href="http://www.woshipm.com" title="人人都是产品经理" target="_blank">人人都是产品经理</a><ul></ul><a href="http://www.chanpin100.com" title="产品100" target="_blank">产品100</a><ul></ul><a href="ttps://www.pmcaff.com" title="PMCAFF" target="_blank">PMCAFF</a><ul></ul><a href="http://36kr.com" title="36氪" target="_blank">36氪</a><ul></ul><a href="https://www.huxiu.com" title="虎嗅" target="_blank">虎嗅</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">王者府.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

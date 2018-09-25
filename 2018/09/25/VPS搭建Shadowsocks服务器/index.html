@@ -1,0 +1,49 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title> | 王者府</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/8.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/1.0.0/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">王者府</h1><a id="logo" href="/.">王者府</a><p class="description"></p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title"></h1><div class="post-meta">Sep 25, 2018</div><div class="post-content"><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">title: VPS搭建Shadowsocks服务器</span><br><span class="line">date: 2017-05-10 18:19:20</span><br><span class="line">tags: [工具]</span><br></pre></td></tr></table></figure>
+<p>​    shadowsocks 是一款自定义协议的代理软件，由于其流量特征不明显，（直到不久前）一直可以稳定提供上网代理。shadowsocks 客户端会在本地开启一个 socks5 代理，通过此代理的网络访问请求由客户端发送至服务端，服务端发出请求，收到响应数据后再发回客户端。</p>
+<ul>
+<li><p>购买VPS服务器</p>
+<ul>
+<li>这里经过对比，选择了Linode</li>
+</ul>
+</li>
+<li><p>远程登陆 VPS</p>
+<ul>
+<li>Mac OS X 或 Linux 下直接在终端中 ssh root@your_vps_ip -p your_ssh_port   即可</li>
+</ul>
+</li>
+<li><p>安装 shadowsocks（Ubuntu/Debian系统）</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">apt-get install python3-pip</span><br><span class="line">pip3 install shadowsocks</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>编写配置文件</p>
+<p>shadowsocks 启动时的参数，如服务器端口，代理端口，登录密码等，可以通过启动时的命令行参数来设定，也可以通过 json 格式的配置文件设定。推荐使用配置文件，方便查看和修改。</p>
+<ul>
+<li><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">emacs /etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p>然后输入如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123; </span><br><span class="line">   &quot;server&quot;:&quot;my_server_ip&quot;, </span><br><span class="line">   &quot;server_port&quot;:25, </span><br><span class="line">   &quot;local_address&quot;: &quot;127.0.0.1&quot;, </span><br><span class="line">   &quot;local_port&quot;:1080, </span><br><span class="line">   &quot;password&quot;:&quot;mypassword&quot;,</span><br><span class="line">    &quot;timeout&quot;:300, </span><br><span class="line">   &quot;method&quot;:&quot;aes-256-cfb&quot;, </span><br><span class="line">   &quot;fast_open&quot;: false &#125;</span><br></pre></td></tr></table></figure>
+<p>配置文件中个字段的含义：</p>
+<ul>
+<li><ul>
+<li>server: 服务器ip地址</li>
+<li>server_port: 绑定的端口，注意不要设置已经使用了的端口</li>
+<li>possword: 密码</li>
+<li>timeout: 超时时间</li>
+<li>method: 加密方法</li>
+<li>fast_open: 如果你的服务器 Linux 内核在3.7+，可以开启 fast_open 以降低延迟</li>
+<li>workers: 默认为1</li>
+</ul>
+</li>
+<li>启动 shadowsocks</li>
+</ul>
+<p>如果已经写好了配置文件，启动 shadowsocks 服务器的命令如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssserver -c /etc/shadowsocks.json</span><br></pre></td></tr></table></figure>
+<p>后台启动和停止 shadowsocks 服务器：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssserver -c /etc/shadowsocks.json -d start ssserver -c /etc/shadowsocks.json -d stop</span><br></pre></td></tr></table></figure>
+<p>shadowsocks 的日志保存在 /var/log/shadowsocks.log</p>
+</div><div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>Jinfei Wang</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="/2018/09/25/VPS搭建Shadowsocks服务器/">http://up-dream.com/2018/09/25/VPS搭建Shadowsocks服务器/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0 CN</a> 许可协议。转载请注明出处！</li></ul></div><br><div class="tags"></div><div class="post-nav"><a class="next" href="/2018/09/25/typora/"></a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://up-dream.com"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/记录/" style="font-size: 15px;">记录</a> <a href="/tags/PM/" style="font-size: 15px;">PM</a> <a href="/tags/VPS/" style="font-size: 15px;">VPS</a> <a href="/tags/ShadowSocks/" style="font-size: 15px;">ShadowSocks</a> <a href="/tags/记录，生活/" style="font-size: 15px;">记录，生活</a> <a href="/tags/软件/" style="font-size: 15px;">软件</a> <a href="/tags/Rust/" style="font-size: 15px;">Rust</a> <a href="/tags/Debian，NFS/" style="font-size: 15px;">Debian，NFS</a> <a href="/tags/PyQtDeploy/" style="font-size: 15px;">PyQtDeploy</a> <a href="/tags/VNC/" style="font-size: 15px;">VNC</a> <a href="/tags/x2go/" style="font-size: 15px;">x2go</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/VPS搭建Shadowsocks服务器/">VPS搭建Shadowsocks服务器</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/typora/">typora</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/学习的苦/">学习的苦</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/我的大学/">我的大学</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/第一次主持人/">第一次主持人</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/第一份工作/">第一份工作</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/如果我们可以足够强大/">如果我们可以足够强大</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/明天，你好/">明天，你好</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/爱情/">爱情</a></li><li class="post-list-item"><a class="post-list-link" href="/2018/09/25/致自己/">致自己</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.fonrich.com" title="丰郅（上海）新能源" target="_blank">丰郅（上海）新能源</a><ul></ul><a href="http://monitoring.fonrich.com:8089" title="Foneye系统" target="_blank">Foneye系统</a><ul></ul><a href="http://www.woshipm.com" title="人人都是产品经理" target="_blank">人人都是产品经理</a><ul></ul><a href="http://www.chanpin100.com" title="产品100" target="_blank">产品100</a><ul></ul><a href="ttps://www.pmcaff.com" title="PMCAFF" target="_blank">PMCAFF</a><ul></ul><a href="http://36kr.com" title="36氪" target="_blank">36氪</a><ul></ul><a href="https://www.huxiu.com" title="虎嗅" target="_blank">虎嗅</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2018 <a href="/." rel="nofollow">王者府.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.3.5/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
